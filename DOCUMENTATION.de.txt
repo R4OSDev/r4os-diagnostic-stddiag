@@ -1,26 +1,20 @@
-﻿STDDIAG.R4X
+STDDIAG.R4X
 ===========
 
-STDDIAG.R4X ist die R4STD-Diagnose.
+Stand 0.90.80 / Modul 0.1.6
 
-Projektstruktur seit 0.51.21:
-- `build.zig` baut die Diagnose als eigenes SDK-Projekt.
-- `build.zig.zon` bindet `r4os_sdk` als Paket.
-- `module.R4MF` beschreibt Artefakt, Zielpfad, R4L-Imports und Contract.
+App2 bindet die Plattform ueber Query2; r4std.init2 bindet unveraendert die unabhaengigen R4STD-Interfaces DATE_V1 und TIME_V1 in Revision 1. Kalender-/Leapyear-/Ungueltig-/ISO- und echte aktuelle Zeitpruefungen bleiben erhalten. Standardbibliotheksvergleiche ersetzen die private Vergleichsschleife.
 
-Build:
+Build vom Workspace-Root:
+    ./Repositories/Diagnostics/StdDiag/Build.sh
+Unter Windows den entsprechenden Build.bat-Starter verwenden.
+Artefakt: Artifacts/Modules/StdDiag/STDDIAG.R4X
+Manifest: Repositories/Diagnostics/StdDiag/module.R4MF
+Profil: r4os-zig-generation2; Klasse console; IMAGE_SCOPE=test.
 
-    cd Code\System\Diagnostics\StdDiag
-    ..\..\..\DevTools\Zig\zig.exe build
+module.R4MF ist die Quelle fuer Version, Imports, Ziel und Einstieg.
+Die Bibliotheks-/API-Vertraege liegen beim jeweiligen Besitzer; das SDK
+setzt weder Berechtigungen noch eine zusaetzliche Runtime voraus.
 
-Ergebnis:
-
-    Code\System\Diagnostics\StdDiag\zig-out\STDDIAG.R4X
-
-Contract:
-- Build-Profil: `Zig/R4XStart`
-- R4XStart-Entry: `stddiag_main`
-- App-Klasse: `console`
-- R4L-Imports: `R4SYS:Query:1`, `R4STD:DATE_V1:1`,
-  `R4STD:TIME_V1:1`
-- Zielpfad im Image: `C:\R4OS\SOFTWARE\TERMINAL\DIAG\STDDIAG.R4X`
+Der technische R4STD:Query2:2-Import bindet die Library-Transportgeneration;
+die genannten fachlichen Interfaces bleiben unabhaengig in Revision 1.

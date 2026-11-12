@@ -1,8 +1,9 @@
+const std = @import("std");
 const r4os = @import("r4os");
 const r4std = @import("r4std");
 
-pub fn r4_app_main(r4_app: *r4os.App) i32 {
-    if (!r4std.init(r4_app.startContext())) return r4os.abi.err_no_group;
+pub fn r4_app_main(r4_app: *r4os.App2) i32 {
+    if (!r4std.init2(r4_app.startContext())) return r4os.abi.err_no_group;
     const ctx = r4_app.system();
     var ok = true;
 
@@ -17,9 +18,9 @@ pub fn r4_app_main(r4_app: *r4os.App) i32 {
 }
 
 fn checkMetadata(ctx: *const r4os.r4sys.Context) bool {
-    const ok = equals(r4std.name, "R4STD") and
-        equals(r4std.import_date_v1, "R4STD:DATE_V1:1") and
-        equals(r4std.import_time_v1, "R4STD:TIME_V1:1");
+    const ok = std.mem.eql(u8, r4std.name, "R4STD") and
+        std.mem.eql(u8, r4std.import_date_v1, "R4STD:DATE_V1:1") and
+        std.mem.eql(u8, r4std.import_time_v1, "R4STD:TIME_V1:1");
     printCheck(ctx, "R4STD tables", ok);
     return ok;
 }
@@ -34,7 +35,7 @@ fn checkDateCore(ctx: *const r4os.r4sys.Context) bool {
 
     var date_buf: [11]u8 = .{0} ** 11;
     const formatted = r4std.date.formatDateIso(date_buf[0..], .{ .year = 2026, .month = 6, .day = 3 });
-    ok = equals(formatted, "2026-06-03") and ok;
+    ok = std.mem.eql(u8, formatted, "2026-06-03") and ok;
     ok = r4std.date.parseDateIso("2026-06-03") != null and ok;
     ok = r4std.date.parseDateIso("2026-02-29") == null and ok;
     printCheck(ctx, "date core", ok);
@@ -64,13 +65,4 @@ fn printCheck(ctx: *const r4os.r4sys.Context, name: []const u8, ok: bool) void {
     ctx.write(name);
     ctx.write(": ");
     ctx.println(if (ok) "OK" else "FAILED");
-}
-
-fn equals(a: []const u8, b: []const u8) bool {
-    if (a.len != b.len) return false;
-    var i: usize = 0;
-    while (i < a.len) : (i += 1) {
-        if (a[i] != b[i]) return false;
-    }
-    return true;
 }
